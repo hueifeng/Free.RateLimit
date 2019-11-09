@@ -2,6 +2,17 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <Description>AspNetCore速率限制用于控制网络接口控制器发送或接收的流量速率，并用于防止DoS攻击。</Description>
+    <PackageProjectUrl>https://github.com/hueifeng/Free.RateLimit</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/hueifeng/Free.RateLimit</RepositoryUrl>
+    <RepositoryType>github</RepositoryType>
+    <Authors>HueiFeng</Authors>
+    <Company />
+    <AssemblyVersion>1.0.1.0</AssemblyVersion>
+    <FileVersion>1.0.1.0</FileVersion>
+    <Version>1.0.1</Version>
   </PropertyGroup>
 
   <ItemGroup>

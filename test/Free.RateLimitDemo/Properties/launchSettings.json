@@ -3,7 +3,7 @@
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
     "iis": {
-      "applicationUrl": "http://localhost/Free.RateLimitDemo",
+      "applicationUrl": "http://localhost:5000/weatherforecast",
       "sslPort": 0
     },
     "iisExpress": {

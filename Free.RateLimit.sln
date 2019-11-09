@@ -9,6 +9,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{14270E60-5
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{B13E1080-2CF3-4AC2-9EFB-82690D00A5BE}"
 	ProjectSection(SolutionItems) = preProject
+		.gitattributes = .gitattributes
+		.gitignore = .gitignore
+		_config.yml = _config.yml
+		index.md = index.md
 		LICENSE = LICENSE
 		README.md = README.md
 	EndProjectSection

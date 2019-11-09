@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Free.RateLimit
 {
-    public  class RateLimitProcessor
+    public  abstract class RateLimitProcessor
     {
         private readonly IRateLimitStore _rateLimitStore;
         private static readonly object _processLocker = new object();
@@ -32,7 +32,6 @@ namespace Free.RateLimit
                     {
                         // increment request count
                         var totalRequests = entry.Value.TotalRequests + 1;
-
                         // deep copy
                         counter = new RateLimitCounter(entry.Value.Timestamp, totalRequests);
                     }

@@ -2,24 +2,21 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Free.RateLimit
 {
-    public class ClientRateLimitMiddleware
+    public class ClientRateLimitMiddleware: RateLimitProcessor
     {
         private readonly ILogger<ClientRateLimitMiddleware> _logger;
         private readonly RequestDelegate _next;
         private readonly IRateLimitStore _rateLimitStore;
-        private readonly RateLimitProcessor _processor;
         private readonly RateLimitOptions _options;
         public ClientRateLimitMiddleware(RequestDelegate next, 
             ILogger<ClientRateLimitMiddleware> logger,
-            IRateLimitStore rateLimitStore, IOptions<RateLimitOptions> options) {
+            IRateLimitStore rateLimitStore, IOptions<RateLimitOptions> options):base(rateLimitStore) {
             _next = next;
             _rateLimitStore = rateLimitStore;
-            _processor = new RateLimitProcessor(rateLimitStore);
             _logger = logger;
             _options = options.Value;
         }
@@ -48,13 +45,13 @@ namespace Free.RateLimit
             if (rule.Limit > 0)
             {
                 // increment counter
-                var counter =(await _processor.ProcessRequest(identity, _options));
+                var counter =(await ProcessRequest(identity, _options));
 
                 // check if limit is reached
                 if (counter.TotalRequests > rule.Limit)
                 {
                     //compute retry after value
-                    var retryAfter = _processor.RetryAfterFrom(counter.Timestamp, rule);
+                    var retryAfter = RetryAfterFrom(counter.Timestamp, rule);
 
                     // log blocked request
                     LogBlockedRequest(context, identity, counter, rule);
@@ -71,7 +68,7 @@ namespace Free.RateLimit
             //set X-Rate-Limit headers for the longest period
             if (!_options.DisableRateLimitHeaders)
             {
-                var headers = _processor.GetRateLimitHeaders(context, identity, _options);
+                var headers = GetRateLimitHeaders(context, identity, _options);
                 context.Response.OnStarting(SetRateLimitHeaders, state: headers);
             }
 
@@ -80,26 +77,16 @@ namespace Free.RateLimit
 
         public  ClientRequestIdentity SetIdentity(HttpContext httpContext, RateLimitOptions option)
         {
-            try
-            {
                 var clientId = "client";
                 if (httpContext.Request.Headers.Keys.Contains(option.ClientIdHeader))
                 {
                     clientId = httpContext.Request.Headers[option.ClientIdHeader].FirstOrDefault();
                 }
-
                 return new ClientRequestIdentity(
                     clientId,
                     httpContext.Request.Path.ToString().ToLowerInvariant(),
                     httpContext.Request.Method.ToLowerInvariant()
                     );
-            }
-            catch (System.Exception)
-            {
-
-                throw;
-            }
-
         }
 
         public bool IsWhitelisted(ClientRequestIdentity requestIdentity, RateLimitOptions option)
