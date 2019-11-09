@@ -1,8 +1,8 @@
-﻿using Free.RateLimit.Core;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Free.RateLimit
@@ -25,15 +25,13 @@ namespace Free.RateLimit
         }
         public async Task Invoke(HttpContext context)
         {
-     
-
             // check if rate limiting is enabled
-            //if (!context.DownstreamReRoute.EnableEndpointEndpointRateLimiting)
-            //{
-            //    _logger.LogInformation($"EndpointRateLimiting is not enabled for ");
-            //    await _next.Invoke(context);
-            //    return;
-            //}
+            if (!_options.EnableRateLimiting)
+            {
+                _logger.LogInformation($"EndpointRateLimiting is not enabled for ");
+                await _next.Invoke(context);
+                return;
+            }
 
             // compute identity from request
             var identity = SetIdentity(context, _options);
@@ -66,9 +64,6 @@ namespace Free.RateLimit
                     // break execution
                     await ReturnQuotaExceededResponse(context, _options, retrystring);
 
-                    // Set Error
-                    //context.Errors.Add(new QuotaExceededError(this.GetResponseMessage(_options)));
-
                     return;
                 }
             }
@@ -83,20 +78,28 @@ namespace Free.RateLimit
             await _next.Invoke(context);
         }
 
-        public virtual ClientRequestIdentity SetIdentity(HttpContext httpContext, RateLimitOptions option)
+        public  ClientRequestIdentity SetIdentity(HttpContext httpContext, RateLimitOptions option)
         {
-            var clientId = "client";
-            if (httpContext.Request.Headers.Keys.Contains(option.ClientIdHeader))
+            try
             {
-                clientId = httpContext.Request.Headers[option.ClientIdHeader].First();
+                var clientId = "client";
+                if (httpContext.Request.Headers.Keys.Contains(option.ClientIdHeader))
+                {
+                    clientId = httpContext.Request.Headers[option.ClientIdHeader].FirstOrDefault();
+                }
+
+                return new ClientRequestIdentity(
+                    clientId,
+                    httpContext.Request.Path.ToString().ToLowerInvariant(),
+                    httpContext.Request.Method.ToLowerInvariant()
+                    );
+            }
+            catch (System.Exception)
+            {
+
+                throw;
             }
 
-            return new ClientRequestIdentity(
-                clientId,
-                httpContext.Request.Path.ToString().ToLowerInvariant(),
-                httpContext.Request.Method.ToLowerInvariant(),
-                httpContext.Request.Method.ToLowerInvariant()
-                );
         }
 
         public bool IsWhitelisted(ClientRequestIdentity requestIdentity, RateLimitOptions option)

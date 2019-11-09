@@ -1,6 +1,4 @@
-using Free.RateLimit.Middleware;
-using Free.RateLimit.Models;
-using Free.RateLimit.Store;
+using Free.RateLimit;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;

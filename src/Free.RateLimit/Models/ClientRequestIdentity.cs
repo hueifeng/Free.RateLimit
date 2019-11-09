@@ -5,17 +5,16 @@
     /// </summary>
     public class ClientRequestIdentity
     {
-        public ClientRequestIdentity(string clientIp,string clientId,string path,string httpVerb) {
+        public ClientRequestIdentity(string clientId,string path,string httpVerb) {
             this.ClientId = clientId;
-            this.ClientIp = clientIp;
             this.Path = path;
             this.HttpVerb = httpVerb;
         }
 
-        /// <summary>
-        ///     客户端IP
-        /// </summary>
-        public string ClientIp { get; set; }
+        ///// <summary>
+        /////     客户端IP
+        ///// </summary>
+        //public string ClientIp { get; set; }
         /// <summary>
         ///     客户端ID
         /// </summary>

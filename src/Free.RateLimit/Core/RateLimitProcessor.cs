@@ -63,7 +63,6 @@ namespace Free.RateLimit
         public Task SaveRateLimitCounter(ClientRequestIdentity requestIdentity, RateLimitOptions option, RateLimitCounter counter, TimeSpan expirationTime)
         {
             var counterId = ComputeCounterKey(requestIdentity, option);
-            var rule = option.RateLimitRule;
 
             // stores: id (string) - timestamp (datetime) - total_requests (long)
             _rateLimitStore.SetAsync(counterId, counter, expirationTime);
@@ -111,8 +110,8 @@ namespace Free.RateLimit
         }
         public TimeSpan ConvertToTimeSpan(string timeSpan) {
             var l = timeSpan.Length - 1;
-            var value = timeSpan.Substring(0,1);
-            var type = timeSpan.Substring(1,1);
+            var value = timeSpan.Substring(0,l);
+            var type = timeSpan.Substring(l,1);
             switch (type)
             {
                 case "d":
