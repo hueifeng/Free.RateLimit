@@ -25,6 +25,7 @@ namespace Free.RateLimit
         }
         public async Task Invoke(HttpContext context)
         {
+
             // check if rate limiting is enabled
             if (!_options.EnableRateLimiting)
             {
