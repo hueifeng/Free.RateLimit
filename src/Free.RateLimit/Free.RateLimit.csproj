@@ -10,10 +10,10 @@
     <RepositoryType>github</RepositoryType>
     <Authors>HueiFeng</Authors>
     <Company />
-    <AssemblyVersion>1.0.3.0</AssemblyVersion>
-    <FileVersion>1.0.3.0</FileVersion>
-    <Version>1.0.3</Version>
-    <PackageIconUrl>https://raw.githubusercontent.com/hueifeng/Free.RateLimit/dev/logo.png</PackageIconUrl>
+    <AssemblyVersion>1.0.4.0</AssemblyVersion>
+    <FileVersion>1.0.4.0</FileVersion>
+    <Version>1.0.4</Version>
+    <PackageIconUrl>https://raw.githubusercontent.com/hueifeng/Free.RateLimit/dev/logo1.png</PackageIconUrl>
   </PropertyGroup>
 
   <ItemGroup>
