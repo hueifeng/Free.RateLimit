@@ -12,8 +12,8 @@
     <Company />
     <AssemblyVersion>1.0.4.0</AssemblyVersion>
     <FileVersion>1.0.4.0</FileVersion>
-    <Version>1.0.4</Version>
-    <PackageIconUrl>https://raw.githubusercontent.com/hueifeng/Free.RateLimit/dev/logo1.png</PackageIconUrl>
+    <Version>1.0.5</Version>
+    <PackageIconUrl>https://raw.githubusercontent.com/hueifeng/Free.RateLimit/dev/logo.png</PackageIconUrl>
   </PropertyGroup>
 
   <ItemGroup>
