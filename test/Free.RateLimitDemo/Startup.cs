@@ -19,9 +19,13 @@ namespace Free.RateLimitDemo
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            //存储请求数等信息
             services.AddMemoryCache();
+            //加载客户端配置
             services.Configure<RateLimitOptions>(Configuration.GetSection("IpRateLimiting"));
+            //注入规则存储服务
             services.AddSingleton<IRateLimitStore, MemoryCacheRateLimitStore>();
+     
             services.AddControllers();
         }
 

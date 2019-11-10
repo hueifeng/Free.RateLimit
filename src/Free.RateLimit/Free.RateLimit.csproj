@@ -12,8 +12,9 @@
     <Company />
     <AssemblyVersion>1.0.4.0</AssemblyVersion>
     <FileVersion>1.0.4.0</FileVersion>
-    <Version>1.0.5</Version>
-    <PackageIconUrl>https://raw.githubusercontent.com/hueifeng/Free.RateLimit/dev/logo.png</PackageIconUrl>
+    <Version>1.0.7</Version>
+    <PackageIconUrl>https://raw.githubusercontent.com/hueifeng/Free.RateLimit/dev/logoFree.png</PackageIconUrl>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
   </PropertyGroup>
 
   <ItemGroup>
@@ -22,6 +23,13 @@
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="3.0.0" />
     <PackageReference Include="Microsoft.Extensions.Options" Version="3.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\LICENSE">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
   </ItemGroup>
 
 </Project>
