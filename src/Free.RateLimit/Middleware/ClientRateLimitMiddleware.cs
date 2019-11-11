@@ -1,25 +1,26 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Free.RateLimit
 {
-    public class ClientRateLimitMiddleware: RateLimitProcessor
+    public class ClientRateLimitMiddleware : RateLimitProcessor
     {
         private readonly ILogger<ClientRateLimitMiddleware> _logger;
         private readonly RequestDelegate _next;
         private readonly IRateLimitStore _rateLimitStore;
         private readonly RateLimitOptions _options;
-        public ClientRateLimitMiddleware(RequestDelegate next, 
+        public ClientRateLimitMiddleware(RequestDelegate next,
             ILogger<ClientRateLimitMiddleware> logger,
-            IRateLimitStore rateLimitStore, IOptions<RateLimitOptions> options):base(rateLimitStore) {
+            IRateLimitStore rateLimitStore, IOptions<RateLimitOptions> options) : base(rateLimitStore)
+        {
             _next = next;
             _rateLimitStore = rateLimitStore;
             _logger = logger;
             _options = options.Value;
         }
+
         public async Task Invoke(HttpContext context)
         {
             // check if rate limiting is enabled
@@ -45,7 +46,7 @@ namespace Free.RateLimit
             if (rule.Limit > 0)
             {
                 // increment counter
-                var counter =(await ProcessRequest(identity, _options));
+                var counter = (await ProcessRequest(identity, _options));
 
                 // check if limit is reached
                 if (counter.TotalRequests > rule.Limit)
@@ -75,18 +76,18 @@ namespace Free.RateLimit
             await _next.Invoke(context);
         }
 
-        public  ClientRequestIdentity SetIdentity(HttpContext httpContext, RateLimitOptions option)
+        public ClientRequestIdentity SetIdentity(HttpContext httpContext, RateLimitOptions option)
         {
-                var clientId = "client";
-                if (httpContext.Request.Headers.Keys.Contains(option.ClientIdHeader))
-                {
-                    clientId = httpContext.Request.Headers[option.ClientIdHeader].FirstOrDefault();
-                }
-                return new ClientRequestIdentity(
-                    clientId,
-                    httpContext.Request.Path.ToString().ToLowerInvariant(),
-                    httpContext.Request.Method.ToLowerInvariant()
-                    );
+            var clientId = "client";
+            if (httpContext.Request.Headers.Keys.Contains(option.ClientIdHeader))
+            {
+                clientId = httpContext.Request.Headers[option.ClientIdHeader];
+            }
+            return new ClientRequestIdentity(
+                clientId,
+                httpContext.Request.Path.ToString().ToLowerInvariant(),
+                httpContext.Request.Method.ToLowerInvariant()
+                );
         }
 
         public bool IsWhitelisted(ClientRequestIdentity requestIdentity, RateLimitOptions option)
@@ -95,17 +96,16 @@ namespace Free.RateLimit
             {
                 return true;
             }
-
             return false;
         }
 
-        public  void LogBlockedRequest(HttpContext httpContext, ClientRequestIdentity identity, RateLimitCounter counter, RateLimitRule rule)
+        public void LogBlockedRequest(HttpContext httpContext, ClientRequestIdentity identity, RateLimitCounter counter, RateLimitRule rule)
         {
             _logger.LogInformation(
                 $"Request {identity.HttpVerb}:{identity.Path} from ClientId {identity.ClientId} has been blocked, quota {rule.Limit}/{rule.Period} exceeded by {counter.TotalRequests}. TraceIdentifier {httpContext.TraceIdentifier}.");
         }
 
-        public  Task ReturnQuotaExceededResponse(HttpContext httpContext, RateLimitOptions option, string retryAfter)
+        public Task ReturnQuotaExceededResponse(HttpContext httpContext, RateLimitOptions option, string retryAfter)
         {
             var message = this.GetResponseMessage(option);
 
@@ -113,7 +113,6 @@ namespace Free.RateLimit
             {
                 httpContext.Response.Headers["Retry-After"] = retryAfter;
             }
-
             httpContext.Response.StatusCode = option.HttpStatusCode;
             return httpContext.Response.WriteAsync(message);
         }

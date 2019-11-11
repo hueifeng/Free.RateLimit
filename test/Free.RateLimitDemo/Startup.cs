@@ -25,7 +25,6 @@ namespace Free.RateLimitDemo
             services.Configure<RateLimitOptions>(Configuration.GetSection("IpRateLimiting"));
             //注入规则存储服务
             services.AddSingleton<IRateLimitStore, MemoryCacheRateLimitStore>();
-     
             services.AddControllers();
         }
 

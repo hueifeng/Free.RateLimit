@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
 using System;
+using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,12 +17,10 @@ namespace Free.RateLimit
             _rateLimitStore = rateLimitStore;
         }
 
-        public async Task<RateLimitCounter> ProcessRequest(ClientRequestIdentity requestIdentity, RateLimitOptions option) {
+        protected async Task<RateLimitCounter> ProcessRequest(ClientRequestIdentity requestIdentity, RateLimitOptions option) {
             RateLimitCounter counter = new RateLimitCounter(DateTime.UtcNow, 1);
             var rule = option.RateLimitRule;
-
             var counterId = ComputeCounterKey(requestIdentity, option);
-
             // serial reads and writes
             lock (_processLocker)
             {
@@ -59,7 +59,7 @@ namespace Free.RateLimit
 
             return counter;
         }
-        public Task SaveRateLimitCounter(ClientRequestIdentity requestIdentity, RateLimitOptions option, RateLimitCounter counter, TimeSpan expirationTime)
+        protected Task SaveRateLimitCounter(ClientRequestIdentity requestIdentity, RateLimitOptions option, RateLimitCounter counter, TimeSpan expirationTime)
         {
             var counterId = ComputeCounterKey(requestIdentity, option);
 
@@ -67,7 +67,7 @@ namespace Free.RateLimit
             _rateLimitStore.SetAsync(counterId, counter, expirationTime);
             return Task.CompletedTask;
         }
-        public RateLimitHeaders GetRateLimitHeaders(HttpContext context,ClientRequestIdentity requestIdentity,RateLimitOptions option) {
+        protected RateLimitHeaders GetRateLimitHeaders(HttpContext context,ClientRequestIdentity requestIdentity,RateLimitOptions option) {
             var rule = option.RateLimitRule;
             RateLimitHeaders headers = null;
             var counterId = ComputeCounterKey(requestIdentity, option);
@@ -90,7 +90,9 @@ namespace Free.RateLimit
             return headers;
         }
 
-        public string ComputeCounterKey(ClientRequestIdentity requestIdentity,RateLimitOptions options) {
+
+
+        protected string ComputeCounterKey(ClientRequestIdentity requestIdentity,RateLimitOptions options) {
             var key = $"{options.RateLimitCounterPrefix}_{requestIdentity.ClientId}_{options.RateLimitRule.Period}_{requestIdentity.HttpVerb}_{requestIdentity.Path}";
             var idBytes = Encoding.UTF8.GetBytes(key);
             byte[] hashBytes;
@@ -101,13 +103,13 @@ namespace Free.RateLimit
             return BitConverter.ToString(hashBytes).Replace("-", string.Empty);
         }
 
-        public int RetryAfterFrom(DateTime timestamp,RateLimitRule rule) {
+        protected int RetryAfterFrom(DateTime timestamp,RateLimitRule rule) {
             var secondsPast = Convert.ToInt32((DateTime.UtcNow-timestamp).TotalSeconds);
             var retryAfter = Convert.ToInt32(rule.PeriodTimespan);
             retryAfter = retryAfter > 1 ? retryAfter - secondsPast : 1;
             return retryAfter;
         }
-        public TimeSpan ConvertToTimeSpan(string timeSpan) {
+        protected TimeSpan ConvertToTimeSpan(string timeSpan) {
             var l = timeSpan.Length - 1;
             var value = timeSpan.Substring(0,l);
             var type = timeSpan.Substring(l,1);
@@ -129,6 +131,8 @@ namespace Free.RateLimit
                     throw new FormatException($"{timeSpan} can't be converted to TimeSpan, unknown type {type}");
             }
         }
+
+
 
     }
 }
