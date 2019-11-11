@@ -14,4 +14,4 @@ Free.RateLimit
 客户端ID限流
 
 - <a href='https://github.com/hueifeng/Free.RateLimit/wiki/%E8%AE%BE%E7%BD%AE%E5%92%8C%E9%85%8D%E7%BD%AE'>设置和配置</a>
-- 定义速度和限制
+- <a href='https://github.com/hueifeng/Free.RateLimit/wiki/%E5%AE%9A%E4%B9%89%E9%80%9F%E5%BA%A6%E5%92%8C%E9%99%90%E5%88%B6'>定义速度和限制</a>
